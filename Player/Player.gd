@@ -16,13 +16,13 @@ var state = MOVE
 var velocity = Vector2.ZERO
 var roll_vector = Vector2.DOWN
 
-onready var animationPlayer = $AnimationPlayer
-onready var animationTree = $AnimationTree
-onready var animationState = animationTree.get("parameters/playback")
-
+onready var animation_player = $AnimationPlayer
+onready var animation_tree = $AnimationTree
+onready var animation_state = animation_tree.get("parameters/playback")
+onready var sword_hitbox = $HitboxPivot/SwordHitbox
 
 func _ready():
-	animationTree.active = true
+	animation_tree.active = true
 
 
 func _physics_process(delta):
@@ -45,17 +45,18 @@ func move_state(delta):
 	input_vector = input_vector.normalized()
 	
 	if input_vector != Vector2.ZERO:
-		animationTree.set("parameters/Idle/blend_position", input_vector)
-		animationTree.set("parameters/Run/blend_position", input_vector)
-		animationTree.set("parameters/Attack/blend_position", input_vector)
-		animationTree.set("parameters/Roll/blend_position", input_vector)
+		animation_tree.set("parameters/Idle/blend_position", input_vector)
+		animation_tree.set("parameters/Run/blend_position", input_vector)
+		animation_tree.set("parameters/Attack/blend_position", input_vector)
+		animation_tree.set("parameters/Roll/blend_position", input_vector)
 		
-		animationState.travel("Run")
+		animation_state.travel("Run")
 		
 		roll_vector = input_vector
+		sword_hitbox.knockback_vector = input_vector
 		velocity = velocity.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta)
 	else:
-		animationState.travel("Idle")
+		animation_state.travel("Idle")
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 	
 	if Input.is_action_just_pressed("attack"):
@@ -73,7 +74,7 @@ func move():
 
 func attack_state(delta):
 	velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
-	animationState.travel("Attack")
+	animation_state.travel("Attack")
 	move()
 
 
@@ -83,7 +84,7 @@ func attack_animation_finished():
 
 func roll_state():
 	velocity = roll_vector * ROLL_SPEED
-	animationState.travel("Roll")
+	animation_state.travel("Roll")
 	move()
 
 
