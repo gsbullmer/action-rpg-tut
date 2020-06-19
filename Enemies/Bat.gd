@@ -4,6 +4,7 @@ extends KinematicBody2D
 export var ACCELERATION = 300
 export var MAX_SPEED = 50
 export var FRICTION = 200
+export var PUSH_VALUE = 100
 
 const EnemyDeathEffect = preload("res://Effects/EnemyDeathEffect.tscn")
 
@@ -21,6 +22,7 @@ onready var stats = $Stats
 onready var player_detection_zone = $PlayerDetectionZone
 onready var sprite = $AnimatedSprite
 onready var hurtbox = $Hurtbox
+onready var soft_collision = $SoftCollision
 
 
 func _physics_process(delta):
@@ -40,8 +42,12 @@ func _physics_process(delta):
 			if player != null:
 				var direction = Vector2(player.global_position - global_position).normalized()
 				velocity = velocity.move_toward(direction * MAX_SPEED, ACCELERATION * delta)
+			else:
+				state = IDLE
 	
 	sprite.flip_h = velocity.x < 0
+	if soft_collision.is_colliding():
+		velocity += soft_collision.get_push_vector() * delta * PUSH_VALUE
 	velocity = move_and_slide(velocity)
 
 
