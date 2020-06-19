@@ -25,6 +25,7 @@ onready var sprite = $AnimatedSprite
 onready var hurtbox = $Hurtbox
 onready var soft_collision = $SoftCollision
 onready var wander_controller = $WanderController
+onready var blink_animation_player = $BlinkAnimationPlayer
 
 
 func _ready():
@@ -88,6 +89,7 @@ func _on_Hurtbox_area_entered(area):
 	stats.health -= area.damage
 	knockback = area.knockback_vector * 125
 	hurtbox.create_hit_effect()
+	hurtbox.start_invincibilty(0.4)
 
 
 func _on_Stats_no_health():
@@ -95,3 +97,11 @@ func _on_Stats_no_health():
 	var enemy_death_effect = EnemyDeathEffect.instance()
 	get_parent().add_child(enemy_death_effect)
 	enemy_death_effect.position = position
+
+
+func _on_Hurtbox_invincibility_started():
+	blink_animation_player.play("Start")
+
+
+func _on_Hurtbox_invincibility_ended():
+	blink_animation_player.play("Stop")
