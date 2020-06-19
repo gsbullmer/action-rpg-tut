@@ -59,7 +59,6 @@ func seek_player():
 func _on_Hurtbox_area_entered(area):
 	stats.health -= area.damage
 	knockback = area.knockback_vector * 125
-	hurtbox.start_invincibilty(0.1)
 	hurtbox.create_hit_effect()
 
 
